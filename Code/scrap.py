@@ -19,7 +19,7 @@ month_range = {
     #2021: [1,2,3,4,5,6,7,8,9,10,11,12],
    #2022: [1,2,3,4,5,6,7,8,9,10,11,12],
  #  2023: [1,2,3,4,5,6,7,8,9,10,11,12],
-   2024: [1]
+   2024: [4]
 }  # Months to scrape for each year 2017,2018,2019,2020,2021,2022,2023,
 year_range = [2024]  # Years to scrape
 
@@ -86,25 +86,11 @@ for year in year_range:
                         # Optionally clean and save the CSV using pandas (commented out)
                         df = pd.read_csv(csv_filename)
                         df_clean = df.dropna()
-                        df_clean['Other'] = df_clean['DELHI'] - (df_clean['BRPL']+df_clean['BYPL']+df_clean['NDPL']+df_clean['NDMC']+df_clean['MES'])
+                        df_clean['Other'] = round((df_clean['DELHI'] - (df_clean['BRPL']+df_clean['BYPL']+df_clean['NDPL']+df_clean['NDMC']+df_clean['MES'])),2)
                         df_clean.to_csv(csv_filename, index=False)
 
         except Exception as e:
             print(f"Error occurred while scraping {date_str}: {str(e)}")
 
-        def Scrapdata(dayint,monint,yearint):
-            overal_dir = os.path.join('C:/bikku/Downloads/SLDC_Data', str(yearint), f"{monint:02d}",f"{dayint:02d}-{monint:02d}-{yearint}.csv")
-            print(overal_dir)
-            scrapd = pd.read_csv(overal_dir)
-            with open(overal_dir, 'r') as file:
-                csv_reader = csv.reader(file)
-                labels = next(csv_reader)  # Read the header row
-                data = list(csv_reader)  # Read the remaining rows
-                print("//////////////sjcndnjnjdv//")
-            dk = list(scrapd['DELHI'])
-            print(dk)
-            return labels, data
-        
-        print(Scrapdata(2,4,2024))
 
                        

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<title>Power Delhi</title>
+</head>
+
+<body bgcolor="#FEFEFF">
+	<div class="graph" style="padding: 50px;display: flex; align-content: space-between;">
+		<div
+			style=" padding-bottom: 0px;  width: 75vw; border: 2px solid #00000050; border-radius: 8px; background: #fff;">
+			<canvas id="myChart" style="margin: 5px;"></canvas>
+		</div>
+		<div class="form" style="padding: 20px;">
+			<input type="date" id="sdate" name='sdate'>
+			<input type="button" id="buyu">
+		</div>
+
+	</div>
+
+	<script>
+		document.getElementById("sdate").addEventListener("change", function() {
+			var selectedDate = document.getElementById("sdate").value;
+
+			$.ajax({
+               url: "/update_date",
+               type: "POST",
+               data: {date: selectedDate},
+               success: function(response) {
+                   // Handle the response from the Flask backend if needed
+               }
+            });
+		});
+
+		const labels = {{ dTs | tojson}};
+		const ddelhi = {{ dDh | tojson}};
+		const adBrpl = {{ dBrpl | tojson}};
+		const adBypl = {{ dBypl | tojson}};
+		const adNdpl = {{ dNdpl | tojson}};
+		const adNdmc = {{ dNdmc | tojson}};
+		const adMes = {{ dMes | tojson}};
+		const adOthers = {{ dOthers | tojson}};
+
+		const data = {
+			labels: labels,
+			datasets: [{
+				label: 'Delhi',
+				backgroundColor: '#ff6c8b50',
+				borderColor: '#ff6c8b',
+				data: ddelhi,
+			},
+			{
+				label: 'BRPL',
+				backgroundColor: '#37a2eb50',
+				borderColor: '#37a2eb',
+				data: adBrpl,
+			},
+			{
+				label: 'BYPL',
+				backgroundColor: '#ffcf5d50',
+				borderColor: '#ffcf5d',
+				data: adBypl,
+			},
+			{
+				label: 'NDPL',
+				backgroundColor: '#57c4c450',
+				borderColor: '#57c4c4',
+				data: adNdpl,
+			},
+			{
+				label: 'NDMC',
+				backgroundColor: '#9c6aff50',
+				borderColor: '#9c6aff',
+				data: adNdmc,
+			},
+			{
+				label: 'MES',
+				backgroundColor: '#46a9ec50',
+				borderColor: '#46a9ec',
+				data: adMes,
+			},
+			{
+				label: 'OTHERS',
+				backgroundColor: '#c9cbcf50',
+				borderColor: '#c9cbcf',
+				data: adOthers,
+
+			}]
+		};
+		const config = {
+			type: 'line',
+			data: data,
+			options: {
+				responsive: true,
+				interaction: {
+					mode: 'index',
+				},
+				plugins: {
+					tooltip: {
+						callbacks: {
+							label: function (context) {
+								let label = context.dataset.label || '';
+
+								if (label) {
+									label += ': ';
+								}
+								if (context.parsed.y !== null) {
+									label += context.parsed.y;
+								}
+								return label;
+							}
+						}
+					},
+					legend: {
+						position: 'bottom',
+					},
+				}
+			},
+		};
+		const myChart = new Chart(
+			document.getElementById('myChart'),
+			config
+		);
+
+
+
+	</script>
+
+</body>
+
+</html>
