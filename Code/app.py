@@ -1,11 +1,12 @@
 # Importing required functions 
-from flask import Flask, render_template , request , redirect ,session
+from flask import Flask, render_template , request , jsonify
+import datetime
 import csv
 import os
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-
+#addre = os.path.join('C:/bikku/Downloads/SLDC_Data', str(year), f"{month:02d}")
 overal_dir = 'C:/bikku/Downloads/SLDC_Data/2024/04/02-04-2024.csv'
 scrapd = pd.read_csv(overal_dir)
 with open(overal_dir, 'r') as file:
@@ -48,6 +49,9 @@ for x in adbrpl:
 		dbrpl.append(z)
 		g=g+dif
 
+# Define Plot Data 
+	labels = labelscsv
+
 # Flask constructor 
 app = Flask(__name__)
 
@@ -55,8 +59,7 @@ app = Flask(__name__)
 @app.route('/')
 def homepage():
 
-	# Define Plot Data 
-	labels = labelscsv
+	
 
 
 	# Return the components to the HTML template 
@@ -73,6 +76,13 @@ def homepage():
 		dOthers = dothers,
 		labels = labels,
 	)
+
+@app.route("/update_date", methods=["POST"])
+def update_date():
+    selected_date = request.form.get("date")
+    # Do something with the selected date (e.g., update a database record)
+    # ...
+    return jsonify({"message": "Date updated successfully!"})
 
 
 # Main Driver Function 
