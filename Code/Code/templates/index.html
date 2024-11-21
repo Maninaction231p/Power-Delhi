@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<link rel="stylesheet" href="./style.css">
+
+	<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+	<title>Power Delhi</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap');
+	</style>
+	<style>
+		:root {
+			--primary-color: #FFD601;
+			--secondary-color: #F5A547;
+			--font-color: #545968;
+			--heading-color: #2D2E42;
+			--bg-color: #e3e2f0;
+			--white: #ffffff;
+			--slider-bg: #cccccc;
+			--foreground-bg: #f4f3fb;
+			--on-graph: #F3F4F6;
+			--boder-color: #566A87;
+		}
+
+		[data-theme='dark'] {
+			--secondary-color: #F5A547;
+			--font-color: #9DA1B6;
+			--heading-color: #C2C3E1;
+			--foreground-bg: #000101;
+			--bg-color: #181B22;
+			--on-graph: #566A8725;
+			--boder-color: #566A87;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+
+		body {
+			background-color: var(--bg-color);
+			color: var(--font-color);
+			display: flex;
+			flex-direction: column;
+			transition: background-color 0.2s linear;
+			justify-content: center;
+			padding: 0px;
+			font-family: "Bricolage Grotesque", sans-serif;
+		}
+
+		h1 {
+			color: var(--heading-color);
+			font-family: 'Sansita One', serif;
+			font-size: 2rem;
+		}
+
+		a {
+			color: var(--primary-color);
+			text-decoration: none;
+		}
+
+		nav,
+		section {
+			display: flex;
+			justify-content: flex-end;
+			margin: auto;
+			max-width: 100%;
+		}
+
+		nav {
+			display: flex;
+			padding: 10px;
+			width: 100%;
+			position: sticky;
+			border-bottom: 1px solid var(--boder-color);
+			margin: auto;
+			z-index: 1000;
+			background-color: var(--bg-color);
+			margin-bottom: 15px;
+			position: sticky;
+			top: 0;
+		}
+
+		nav .navcontent {
+			width: 95%;
+			margin: 10px auto;
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		.theme-switch-label {
+			position: relative;
+		}
+
+		#theme-switch {
+			position: absolute;
+			opacity: 0;
+			visibility: hidden;
+		}
+
+		.theme-switch-slider {
+			background-color: var(--foreground-bg);
+			cursor: pointer;
+			border-radius: 10px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 0 8px;
+			position: relative;
+			height: 34px;
+			width: 60px;
+			transition: 0.2s;
+		}
+
+		.theme-switch-slider:before {
+			background-color: var(--foreground-bg);
+			bottom: 4px;
+			content: '';
+			height: 26px;
+			left: 4px;
+			position: absolute;
+			transition: 0.6s;
+			width: 26px;
+			border-radius: 10px;
+		}
+
+		#theme-switch:checked+.theme-switch-slider {
+			background-color: var(--foreground-bg);
+		}
+
+		#theme-switch:checked+.theme-switch-slider:before {
+			transform: translateX(26px);
+		}
+
+		select {
+			/* Reset */
+			appearance: none;
+			border: 0;
+			outline: 0;
+			display: block;
+			/* Personalize */
+			width: 100%;
+			border: 1px solid #8292a2;
+			position: relative;
+			padding: 1rem 3.5rem 1rem 0.75rem;
+			font-size: 1rem;
+			font-family: monospace;
+			color: var(--font-color);
+			border-radius: 0.25rem;
+			background-color: var(--on-graph);
+			cursor: pointer;
+
+			/* Remove IE arrow */
+			&::-ms-expand {
+				display: none;
+			}
+
+			/* Remove focus outline */
+			&:focus {
+				outline: none;
+			}
+
+			/* <option> colors */
+			option {
+				color: inherit;
+				background-color: var(--foreground-bg);
+			}
+		}
+
+
+		.labels {
+			font-size: 1.2rem;
+			color: var(--font-color);
+		}
+
+		table {
+			margin: auto;
+		}
+
+		table tr td {
+			padding-bottom: 4px;
+			padding-top: 4px;
+			padding-right: 8px;
+		}
+
+		input[type="date"] {
+			display: block;
+			position: relative;
+			padding: 1rem 3.5rem 1rem 0.75rem;
+
+			font-size: 1rem;
+			font-family: monospace;
+			color: var(--font-color);
+
+			border: 1px solid #8292a2;
+			border-radius: 0.25rem;
+			background:
+				var(--on-graph) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='22' viewBox='0 0 20 22'%3E%3Cg fill='none' fill-rule='evenodd' stroke='%23688EBB' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' transform='translate(1 1)'%3E%3Crect width='18' height='18' y='2' rx='2'/%3E%3Cpath d='M13 0L13 4M5 0L5 4M0 8L18 8'/%3E%3C/g%3E%3C/svg%3E") right 1rem center no-repeat;
+
+			cursor: pointer;
+		}
+
+		input[type="date"]:focus {
+			outline: none;
+			color: var(--heading-color);
+			border-color: #3acfff;
+			box-shadow: 0 0 0 0.25rem rgba(0, 120, 250, 0.1);
+		}
+
+		::-webkit-datetime-edit {}
+
+		::-webkit-datetime-edit-fields-wrapper {}
+
+		::-webkit-datetime-edit-month-field:hover,
+		::-webkit-datetime-edit-day-field:hover,
+		::-webkit-datetime-edit-year-field:hover {
+			background: var(--on-graph);
+		}
+
+		::-webkit-datetime-edit-text {
+			opacity: 1;
+		}
+
+		::-webkit-clear-button,
+		::-webkit-inner-spin-button {
+			display: none;
+		}
+
+		::-webkit-calendar-picker-indicator {
+			position: absolute;
+			width: 2.5rem;
+			height: 100%;
+			top: 0;
+			right: 0;
+			bottom: 0;
+
+			opacity: 0;
+			cursor: pointer;
+
+			color: rgba(0, 120, 250, 1);
+			background: rgba(0, 120, 250, 1);
+
+		}
+
+		input[type="date"]:hover::-webkit-calendar-picker-indicator {
+			opacity: 0.05;
+		}
+
+		input[type="date"]:hover::-webkit-calendar-picker-indicator:hover {
+			opacity: 0.15;
+		}
+
+
+		.allsection {
+			width: 95%;
+			margin: auto;
+			padding-top: 8px;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: 22.5px;
+		}
+
+		.fullcard {
+			height: 100%;
+			width: 100%;
+			padding: 15px;
+			background-color: var(--foreground-bg);
+			border-radius: 10px;
+		}
+
+		.halfcard {
+			height: 100%;
+			width: 70%;
+			padding: 15px;
+			background-color: var(--foreground-bg);
+			border-radius: 10px;
+		}
+
+		.abt {
+			height: 100%;
+			width: 28%;
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: column;
+			justify-content: space-between;
+			gap: 22.5px;
+		}
+
+		.filter {
+			padding: 15px;
+			width: 100%;
+			background-color: var(--foreground-bg);
+			border-radius: 10px;
+		}
+
+		.desc {
+			padding: 15px;
+			padding-top: 15px;
+			width: 100%;
+			font-size: 16px;
+			background-color: var(--foreground-bg);
+			border-radius: 10px;
+			color: var(--font-color);
+			text-align: justify;
+		}
+
+		.cards {
+			border: 1px solid var(--boder-color);
+		}
+
+		.card-content {
+			position: relative;
+			z-index: 3;
+			color: #000;
+		}
+	</style>
+</head>
+
+<body>
+	<nav>
+		<div class="navcontent">
+		<label class="theme-switch-label" for="theme-switch">
+			<input type="checkbox" id="theme-switch" />
+			<span class="theme-switch-slider">
+				<i class="fa-solid fa-sun"></i>
+				<i class="fas fa-moon"></i>
+			</span>
+		</label>
+	</div>
+	</nav>
+	<div class="allsection">
+		<div class="fullcard cards">
+			<div class="card-content">
+				<div id="line-chart">
+
+				</div>
+			</div>
+		</div>
+
+		<div class="halfcard cards">
+			<div class="card-content">
+				<div id="delhi-chart">
+
+				</div>
+			</div>
+		</div>
+		<div class="abt">
+			<div class="filter cards">
+				<form method="POST" id="mainform">
+					<table>
+						<tr>
+							<td>
+								<label class="labels" for="selected_date">Date</label>
+							</td>
+							<td>
+								<input type="date" name="selected_date" id="selected_date" value="{{s_date}}"
+									min="2017-12-24" oninput="this.form.submit()">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<label class="labels" for="pda">Period</label>
+							</td>
+							<td>
+								<select name="pda" id="pda" onchange="this.form.submit()">
+									<option value=6 {% if p_data=='6' %} selected {% endif %}>30 mins</option>
+									<option value=12 {% if p_data=='12' %} selected {% endif %}>1 hour</option>
+									<option value=24 {% if p_data=='24' %} selected {% endif %}>2 hours</option>
+									<option value=36 {% if p_data=='36' %} selected {% endif %}>3 hours</option>
+									<option value=48 {% if p_data=='48' %} selected {% endif %}>4 hours</option>
+								</select>
+							</td>
+						</tr>
+					</table>
+					<span id="hiddensignal"></span>
+				</form>
+			</div>
+			<div class="desc cards">
+				<p>The chart displays the load management data for Delhi, with various power distribution companies
+					represented by different colored lines:</p>
+				<ul>
+					<li>BRPL (blue)</li>
+					<li>BYPL (green) </li>
+					<li>NDPL (orange)</li>
+					<li>NDMC (pink)</li>
+					<li>MES (purple)</li>
+					<li>Others (teal)</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+	<script>
+		const labels = {{ dTs | tojson}};
+		const ddelhi = {{ dDh | tojson}};
+		const adBrpl = {{ dBrpl | tojson}};
+		const adBypl = {{ dBypl | tojson}};
+		const adNdpl = {{ dNdpl | tojson}};
+		const adNdmc = {{ dNdmc | tojson}};
+		const adMes = {{ dMes | tojson}};
+		const adOthers = {{ dOthers | tojson}};
+
+
+		var chartOptions = {
+			chart: {
+				height: 400,
+				type: 'line',
+				fontFamily: 'Helvetica',
+				foreColor: 'var(--font-color)',
+				toolbar: {
+					show: false,
+				},
+			},
+			tooltip: {
+				style: {
+					fontSize: '12px',
+				},
+			},
+			yaxis: {
+				show: true,
+				decimalsInFloat: 0,
+			},
+			stroke: {
+				curve: 'smooth',
+				width: 1,
+			},
+			series: [
+				{
+					name: 'Delhi',
+					data: ddelhi,
+				},
+				{
+					name: 'BRPL',
+					data: adBrpl,
+				},
+				{
+					name: 'BYPL',
+					data: adBypl,
+				},
+				{
+					name: 'NDPL',
+					data: adNdpl,
+				},
+				{
+					name: 'NDMC',
+					data: adNdmc,
+				},
+				{
+					name: 'MES',
+					data: adMes,
+				},
+				{
+					name: 'Others',
+					data: adOthers,
+				},
+			],
+			title: {
+				text: 'Load Management',
+				align: 'left',
+				offsetY: 25,
+				offsetX: 5,
+				style: {
+					fontSize: '20px',
+					fontWeight: 'light',
+					color: 'var(--font-color)',
+				},
+			},
+			markers: {
+				size: 4,
+				strokeWidth: 0,
+				hover: {
+					size: 6,
+				},
+			},
+			grid: {
+				show: true,
+				padding: {
+					bottom: 0,
+				},
+			},
+			labels: labels,
+			xaxis: {
+				tooltip: {
+					enabled: false,
+				},
+			},
+
+			legend: {
+				position: 'top',
+				horizontalAlign: 'right',
+				offsetY: -10,
+				labels: {
+					colors: 'var(--font-color)',
+				},
+			},
+			grid: {
+				borderColor: 'var(--on-graph)',
+				xaxis: {
+					lines: {
+						show: true,
+					},
+				},
+			},
+		};
+
+		var lineChart = new ApexCharts(document.querySelector('#line-chart'), chartOptions);
+		lineChart.render();
+
+
+
+
+	</script>
+
+	<script>
+		var chartOptions = {
+			chart: {
+				height: 400,
+				type: 'area',
+				fontFamily: 'Helvetica',
+				foreColor: 'var(--font-color)',
+				toolbar: {
+					show: false
+				}
+			},
+			labels: labels,
+			tooltip: {
+				style: {
+					fontSize: '12px'
+				}
+			},
+			yaxis: {
+				show: true,
+				decimalsInFloat: 0
+			},
+			stroke: {
+				curve: 'smooth',
+				width: 3,
+			},
+			series: [
+				{
+					name: 'Delhi',
+					data: ddelhi,
+					fill: {
+						type: 'gradient',
+						gradient: {
+							shadeIntensity: 1,
+							opacityFrom: 0.7,
+							opacityTo: 0.9,
+							stops: [0, 90, 100]
+						}
+					}
+				}
+			],
+			title: {
+				text: 'DELHI',
+				align: 'center',
+				offsetY: 0,
+				offsetX: 0,
+				style: {
+					fontSize: '20px',
+					fontWeight: 'light',
+					color: 'var(--font-color)'
+				}
+			},
+			markers: {
+				size: 1,
+				strokeWidth: 0,
+				hover: {
+					size: 6
+				}
+			},
+			dataLabels: {
+				enabled: false
+			},
+			xaxis: {
+				tooltip: {
+					enabled: false
+				}
+			},
+			legend: {
+				position: 'top',
+				horizontalAlign: 'right',
+				offsetY: -10,
+				labels: {
+					colors: 'var(--font-color)'
+				}
+			},
+			grid: {
+				borderColor: 'var(--on-graph)',
+				xaxis: {
+					lines: {
+						show: false
+					}
+				}
+			}
+		};
+
+		var areaChart = new ApexCharts(document.querySelector('#delhi-chart'), chartOptions);
+		areaChart.render();
+
+
+	</script>
+
+	<script>
+		const toggleSwitch = document.querySelector('#theme-switch');
+		toggleSwitch.addEventListener('change', switchTheme);
+		var x = {{ modeopt | tojson}};
+		console.log("HII" + x);
+		signaltheme(x);
+
+		if (x == 1) {
+			// Apply dark theme
+			toggleSwitch.checked = true;
+			document.documentElement.setAttribute('data-theme', 'dark');
+		} else {
+			// Apply light theme
+			toggleSwitch.checked = false;
+		}
+
+		function switchTheme(e) {
+			const theme = e.target.checked ? 'dark' : 'light';
+			document.documentElement.setAttribute('data-theme', theme);
+			var x = toggleSwitch.checked ? 1 : 0
+			if (x == 1 || x == 0) {
+				console.log("bye" + x);
+				signaltheme(x);
+			}
+		}
+
+		function signaltheme(x) {
+			console.log(x);
+			const hiddenInputHTML = `<input type="hidden" name="mode" id="mode" value=${x}>`;
+			document.getElementById("hiddensignal").innerHTML = hiddenInputHTML;
+		}
+
+	</script>
+
+</body>
+
+</html>
