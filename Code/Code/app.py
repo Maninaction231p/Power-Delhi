@@ -138,7 +138,7 @@ def scrapdate(year,month,day,period):
     try:
         if (day == '6') and month == '1' and year == '2024':
             print("06/01/2024 data Not Available..")
-        elif (int(day) > int(todayday) and int(month) >= int(todaymonth) and int(year) >= int(todayyear)) or (int(month) > int(todaymonth) and int(year) == int(todayyear)) or (int(year) > int(todayyear)):
+        elif ((int(day) > int(todayday)+1 and int(month) >= int(todaymonth) and int(year) >= int(todayyear)) or (int(month) > int(todaymonth) and int(year) == int(todayyear)) or (int(year) > int(todayyear))):
             print("This is Actuall Data. Future Data Can't be found")
         else: 
             print(f"Scraping data for {date_str}")
